@@ -3,39 +3,104 @@ package Project::Euler::Lib::Types;
 use Modern::Perl;
 
 
-# predeclare our own types
+#  Declare our types
 use MooseX::Types
     -declare => [qw/
-        PosInt      PosIntArray
-        NegInt      NegIntArray
+        ProblemLink     ProblemName
+        PosInt          PosIntArray
+        NegInt          NegIntArray
         MyDateTime
 /];
 
 
-# import builtin types
+#  Import builtin types
 use MooseX::Types::Moose qw/ Str  Int  ArrayRef /;
 
 =head1 NAME
 
-Project::Euler::Lib::Types
+Project::Euler::Lib::Types - Type definitions for L<< Project::Euler >>
 
 =head1 VERSION
 
-Version v0.1.0
+Version v0.1.1
 
 =cut
 
-use version 0.77; our $VERSION = qv("v0.1.0");
+use version 0.77; our $VERSION = qv("v0.1.1");
 
 
 =head1 SYNOPSIS
 
-My custom types definitions
+    use Project::Euler::Lib::Types  qw/ (types to import) /;
 
-    with Project::Euler::Lib::Types  qw/ (types to import) /;
+=head1 DESCRIPTION
+
+(Most) all of the types that our modules use are defined here so that they can
+be reused and tested.  This also helps prevent all of the namespace pollution
+from the global declarations.
 
 
 =head1 SUBTYPES
+
+Create the subtypes that we will use to validate the arguments defined by the
+extending classes
+
+    m_ \A \Qhttp://projecteuler.net/index.php?section=problems&id=\E \d+ \z _xms
+    Base::prob_name = str  &&  10 < len < 80
+
+We also tell Moose how to coerce a given string into a DateTime object
+
+=cut
+
+=head2 ProblemLink
+
+A url pointing to a problem setup on L<< http://projecteuler.net >>
+
+    as Str,
+    message { "$_ is not a a valid link" },
+    where { $_ =~ m{
+                \A
+                \Qhttp://projecteuler.net/index.php?section=problems&id=\E
+                \d+
+                \z
+            }xms
+    };
+
+=cut
+
+subtype ProblemLink,
+    as Str,
+    message { sprintf(q{'%s' is not a valid link}, $_ // '#UNDEFINED#') },
+    where { $_ =~ m{
+                \A
+                \Qhttp://projecteuler.net/index.php?section=problems&id=\E
+                \d+
+                \z
+            }xms;
+    };
+
+
+=head2 ProblemName
+
+In an effort to limit text runoff, the problem name is limited to 80
+characters.  Similarly, the length must also be greater than 10 to ensure it is
+a usefull name.
+
+    as Str,
+    message { qq{'$_' must be a a string between 10 and 80 characters long} },
+    where {
+        length $_ > 10  and  length $_ < 80;
+    };
+
+=cut
+
+subtype ProblemName,
+    as Str,
+    message { sprintf(q{'%s' must be a string between 10 and 80 characters long}, $_ // '#UNDEFINED#') },
+    where {
+        length $_ > 10  and  length $_ < 80;
+    };
+
 
 =head2 PosInt
 
@@ -87,20 +152,14 @@ subtype NegIntArray, as ArrayRef[NegInt];
 
 =head2 MyDateTime
 
-A L<< DateTime >> object parsed using L<< DateTime::Format::Natural >>
+A L<< DateTime >> object parsed using L<< DateTime::Format::DateParse >>
 
-    my $en_parser = DateTime::Format::Natural->new(
-        lang      => 'en',
-        time_zone => 'UTC',
-    );
     class_type MyDateTime, { class => 'DateTime' };
     coerce MyDateTime,
         from Str,
         via {
-            my $datetime = $en_parser->parse_datetime($_);
-            $en_parser->success  ?  $datetime  :  undef
+            DateTime::Format::DateParse->parse_datetime( $_ );
         };
-
 
 =cut
 
@@ -125,16 +184,11 @@ the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Project-Eu
 automatically be notified of progress on your bug as I make changes.
 
 
-
-
 =head1 SUPPORT
 
 You can find documentation for this module with the perldoc command.
 
     perldoc Project::Euler::Lib::Common
-
-
-=head1 ACKNOWLEDGEMENTS
 
 
 =head1 COPYRIGHT & LICENSE
@@ -150,5 +204,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-no Moose::Role;
-1; # End of Project::Euler::Lib::Common
+1; # End of Project::Euler::Lib::Types

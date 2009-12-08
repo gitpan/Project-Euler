@@ -1,5 +1,5 @@
 ---
-abstract: 'Solutions for projecteuler.net'
+abstract: 'Solutions for L<< http://projecteuler.net >>'
 author:
   - 'Adam Lesperance, C<< <lespea at cpan.org> >>'
 build_requires:
@@ -38,4 +38,4 @@ requires:
   version: 0.77
 resources:
   license: http://opensource.org/licenses/gpl-license.php
-version: 0.001003
+version: 0.001004
