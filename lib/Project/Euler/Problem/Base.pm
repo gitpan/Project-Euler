@@ -2,13 +2,10 @@ package Project::Euler::Problem::Base;
 
 use Modern::Perl;
 use Moose::Role;
-use Moose::Util::TypeConstraints;
 
 use Project::Euler::Lib::Types  qw/ ProblemLink  ProblemName  PosInt  MyDateTime /;
 
 use Carp;
-use DateTime;
-use DateTime::Format::Natural;
 use Readonly;
 
 Readonly::Scalar my $BASE_URL => q{http://projecteuler.net/index.php?section=problems&id=};
@@ -20,11 +17,11 @@ Project::Euler::Problem::Base - Abstract class that the problems will extend fro
 
 =head1 VERSION
 
-Version v0.2.1
+Version v0.2.2
 
 =cut
 
-use version 0.77; our $VERSION = qv("v0.2.1");
+use version 0.77; our $VERSION = qv("v0.2.2");
 
 
 =head1 SYNOPSIS
@@ -375,4 +372,4 @@ See http://dev.perl.org/licenses/ for more information.
 =cut
 
 no Moose::Role;
-1; # End of Project::Euler::Base
+1; # End of Project::Euler::Problem::Base

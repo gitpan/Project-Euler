@@ -7,6 +7,7 @@ build_requires:
   Test::Exception: 0.22
   Test::More: 0.42
   Test::Most: 0.20
+  autodie: 1.999
 configure_requires:
   ExtUtils::MakeMaker: 6.42
 distribution_type: module
@@ -20,6 +21,10 @@ no_index:
   directory:
     - inc
     - t
+    - xt
+recommends:
+  HTML::TreeBuilder::XPath: 0
+  WWW::Mechanize: 0
 requires:
   Carp: 0.00
   DateTime: 0.38
@@ -30,12 +35,12 @@ requires:
   Modern::Perl: 1.03
   Moose: 0.65
   Moose::Role: 0.65
-  Moose::Util::TypeConstraints: 0.65
   MooseX::Method::Signatures: 0.09
   MooseX::Types: 0.12
-  autodie: 1.999
+  MooseX::Types::Moose: 0.00
+  Readonly: 0.00
   perl: 5.10.0
   version: 0.77
 resources:
   license: http://opensource.org/licenses/gpl-license.php
-version: 0.001004
+version: 0.001005
