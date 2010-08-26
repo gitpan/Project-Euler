@@ -1,11 +1,21 @@
 #!perl -T
 
+BEGIN {
+  unless ($ENV{AUTHOR_TESTING}) {
+    require Test::More;
+    Test::More::plan(skip_all => 'these tests are for testing by the author');
+  }
+}
+
+
 use strict;
 use warnings;
+
 use autodie;
 use Test::More;
+use File::Spec qw/  /;
 
-use constant PROBLEM_PATH => 'lib/Project/Euler/Problem/';
+use constant PROBLEM_PATH => File::Spec->catdir( qw/ lib  Project  Euler  Problem / );
 
 
 my @files;
@@ -14,9 +24,7 @@ while (( my $filename = readdir($dir) )) {
     push @files, $filename  if  $filename =~ / \A p \d+ \.pm \z /xmsi;
 }
 
-plan tests => (scalar @files * 1) + 3;
-diag('Check for default boilercode or template code');
-
+plan tests => (scalar @files * 1);
 
 sub not_in_file_ok {
     my ($type, $filename, %regex) = @_;
@@ -42,27 +50,8 @@ sub not_in_file_ok {
 }
 
 
-
-
-
-not_in_file_ok('boilerplate', README =>
-"The README is used..."       => qr/The README is used/,
-"'version information here'"  => qr/to provide version information/,
-);
-
-not_in_file_ok('boilerplate', Changes =>
-"placeholder date/time"       => qr(Date/time)
-);
-
-not_in_file_ok('boilerplate', 'lib/Project/Euler.pm' =>
-    'the great new $MODULENAME'   => qr/ - The great new /,
-    'boilerplate description'     => qr/Quick summary of what the module/,
-    'stub function definition'    => qr/function[12]/,
-);
-
-
 for  my $module_name  (@files) {
-    not_in_file_ok('template', PROBLEM_PATH . $module_name =>
-        '### TEMPLATE ###'   => qr/### TEMPLATE ###/,
-    );
+    not_in_file_ok('template', File::Spec->catfile( PROBLEM_PATH, $module_name ), (
+        '### TEMPLATE ###'   =>  qr/### TEMPLATE ###/,
+    ));
 }
